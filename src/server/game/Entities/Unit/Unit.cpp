@@ -14246,8 +14246,8 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* target, uint32 procFlag, u
                     case SPELL_AURA_TRANSFORM:
                     {
 					// Dragon Breath & Living Bomb
-                        if (spellInfo->Category == 1215 && procSpell && 
-                        procSpell->SpellFamilyName == SPELLFAMILY_MAGE && procSpell->SpellFamilyFlags[1] == 0x00010000)
+                        if (sSpellCategoryStore.LookupEntry(1215) && procSpell && 
+                        procSpell->SpellFamilyName == SPELLFAMILY_MAGE && procSpell->SpellFamilyFlags[1] == 0x00010000) // spellInfo->Category == 1215 
                         break;
 
 
