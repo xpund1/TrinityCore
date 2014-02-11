@@ -1,2 +1,4 @@
 Core/Spells: Fix Dragon's Breath and Living Bomb
 Core/Spells: Death Knight - Raise Dead (Ghoul) - Eternal CD
+Core/Resiliens: Fix resiliens #1
+Core/Other: Fixed CCD
