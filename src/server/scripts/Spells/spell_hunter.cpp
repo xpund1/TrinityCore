@@ -624,6 +624,9 @@ class spell_hun_pet_heart_of_the_phoenix : public SpellScriptLoader
                     {
                         owner->CastCustomSpell(SPELL_HUNTER_PET_HEART_OF_THE_PHOENIX_TRIGGERED, SPELLVALUE_BASE_POINT0, 100, caster, true);
                         caster->CastSpell(caster, SPELL_HUNTER_PET_HEART_OF_THE_PHOENIX_DEBUFF, true);
+                        caster->setDeathState(ALIVE);
+                        caster->SetHealth(caster->GetMaxHealth());
+                        caster->SetPower(POWER_MANA, caster->GetMaxPower(POWER_MANA)); 
                     }
             }
 

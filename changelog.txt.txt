@@ -4,3 +4,4 @@ Core/Resiliens: Fix resiliens #1
 Core/Other: Fixed CCD (Crowd Control Delay)
 DB/Spell: Fix: "Raise Death" of the Death knight Class (Thx Torrad).
 Core/Spell: Chimera Shot + Skilled Steady Shot Damage
+Core/Spell: Fix Phoenix Heart hunter pet
