@@ -1,1 +1,2 @@
 Core/Spells: Fix Dragon's Breath and Living Bomb
+Core/Spells: Death Knight - Raise Dead (Ghoul) - Eternal CD
