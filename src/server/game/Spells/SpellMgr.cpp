@@ -3260,6 +3260,12 @@ void SpellMgr::LoadSpellInfoCorrections()
             case 61719: // Easter Lay Noblegarden Egg Aura - Interrupt flags copied from aura which this aura is linked with
                 spellInfo->AuraInterruptFlags = AURA_INTERRUPT_FLAG_HITBYSPELL | AURA_INTERRUPT_FLAG_TAKE_DAMAGE;
                 break;
+            case 61874: // Noblegarden Chocolate
+                spellInfo->Effects[EFFECT_1].Effect = SPELL_EFFECT_APPLY_AURA;
+                spellInfo->Effects[EFFECT_1].ApplyAuraName = SPELL_AURA_PERIODIC_TRIGGER_SPELL;
+                spellInfo->Effects[EFFECT_1].Amplitude = 10000;
+                spellInfo->Effects[EFFECT_1].TriggerSpell = 24870;
+                break;
             case 70650: // Death Knight T10 Tank 2P Bonus
                 spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_ADD_PCT_MODIFIER;
                 break;
