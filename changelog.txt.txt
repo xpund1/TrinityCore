@@ -6,3 +6,4 @@ DB/Spell: Fix: "Raise Death" of the Death knight Class (Thx Torrad).
 Core/Spell: Chimera Shot + Skilled Steady Shot Damage
 Core/Spell: Fix Phoenix Heart hunter pet
 Core/Spell: Noblegarden Chocolate
+Core/SPell: Opening a game object(banner) under absorb effects in battlegrounds should result an interupt. tempfix till proper way implemented!
