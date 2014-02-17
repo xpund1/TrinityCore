@@ -9,3 +9,4 @@ Core/Spell: Noblegarden Chocolate
 Core/SPell: Opening a game object(banner) under absorb effects in battlegrounds should result an interupt. tempfix till proper way implemented!
 Core/SpellMgr: Correct SpellClassMask Idol of the Crying Wind and Idol of Worship
 DB/Spell: Fix: "Animal Handler"
+Core/Spell:  Fixing Cobra Strikes initial charge amount and its removing basic idea for removing by tobmaps (Tnx Tibbi)
