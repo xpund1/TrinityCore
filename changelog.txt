@@ -2,9 +2,10 @@ Core/Spells: Fix Dragon's Breath and Living Bomb
 Core/Spells: Death Knight - Raise Dead (Ghoul) - Eternal CD
 Core/Resiliens: Fix resiliens #1
 Core/Other: Fixed CCD (Crowd Control Delay)
-DB/Spell: Fix: "Raise Death" of the Death knight Class (Thx Torrad).
+DB/Spell: Fix: "Raise Death" of the Death knight Class.
 Core/Spell: Chimera Shot + Skilled Steady Shot Damage
 Core/Spell: Fix Phoenix Heart hunter pet
 Core/Spell: Noblegarden Chocolate
 Core/SPell: Opening a game object(banner) under absorb effects in battlegrounds should result an interupt. tempfix till proper way implemented!
 Core/SpellMgr: Correct SpellClassMask Idol of the Crying Wind and Idol of Worship
+DB/Spell: Fix: "Animal Handler"
