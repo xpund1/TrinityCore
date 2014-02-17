@@ -7,3 +7,4 @@ Core/Spell: Chimera Shot + Skilled Steady Shot Damage
 Core/Spell: Fix Phoenix Heart hunter pet
 Core/Spell: Noblegarden Chocolate
 Core/SPell: Opening a game object(banner) under absorb effects in battlegrounds should result an interupt. tempfix till proper way implemented!
+Core/SpellMgr: Correct SpellClassMask Idol of the Crying Wind and Idol of Worship

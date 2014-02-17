@@ -3224,10 +3224,17 @@ void SpellMgr::LoadSpellInfoCorrections()
                         // this needs research on modifier applying rules, does not seem to be in Attributes fields
                 spellInfo->Effects[EFFECT_0].SpellClassMask = flag96(0x00000040, 0x00000000, 0x00000000);
                 break;
+             case 60774: // Idol of Worship
+				 spellInfo->Effects[EFFECT_0].SpellClassMask = flag96(0x00800000, 0x00000000, 0x00000000);
+				 spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_ADD_FLAT_MODIFIER;
+                 break;
             case 64949: // Idol of the Flourishing Life
                 spellInfo->Effects[EFFECT_0].SpellClassMask = flag96(0x00000000, 0x02000000, 0x00000000);
                 spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_ADD_FLAT_MODIFIER;
                 break;
+			case 64950: // Idol of the Crying Wind
+                spellInfo->Effects[EFFECT_0].SpellClassMask = flag96(0x00200000, 0x00000000, 0x00000000);
+                spellInfo->Effects[EFFECT_0].ApplyAuraName = SPELL_AURA_ADD_FLAT_MODIFIER;
             case 34231: // Libram of the Lightbringer
             case 60792: // Libram of Tolerance
             case 64956: // Libram of the Resolute
