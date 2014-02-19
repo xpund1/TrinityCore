@@ -283,9 +283,8 @@ void BattlegroundMgr::BuildPvpLogDataPacket(WorldPacket* data, Battleground* bg)
         else
         {
             Player* player = ObjectAccessor::FindPlayer(itr2->first);
-            uint32 team = bg->GetPlayerTeam(itr2->first);
-            if (!team && player)
-                team = player->GetBGTeam();
+
+            uint32 team = player->GetBGTeam();
             *data << uint8(team == ALLIANCE ? 1 : 0); // green or yellow
         }
         *data << uint32(score->DamageDone);              // damage done
@@ -942,10 +941,8 @@ void BattlegroundMgr::SendToBattleground(Player* player, uint32 instanceId, Batt
         float x, y, z, O;
         uint32 mapid = bg->GetMapId();
         uint32 team = player->GetBGTeam();
-        if (team == 0)
-            team = player->GetBGTeam();
 
-        bg->GetTeamStartLoc(team, x, y, z, O);
+        bg->GetTeamStartLoc(player->GetBGTeam(), x, y, z, O);
         TC_LOG_DEBUG("bg.battleground", "BattlegroundMgr::SendToBattleground: Sending %s to map %u, X %f, Y %f, Z %f, O %f (bgType %u)", player->GetName().c_str(), mapid, x, y, z, O, bgTypeId);
         player->TeleportTo(mapid, x, y, z, O);
     }

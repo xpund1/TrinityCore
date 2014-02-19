@@ -516,6 +516,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                     player->SendDirectMessage(&status);
 
                     player->RemoveAurasDueToSpell(SPELL_ARENA_PREPARATION);
+					player->SetCommandStatusOff(CHEAT_CASTTIME);
                     player->ResetAllPowers();
                     if (!player->IsGameMaster())
                     {
@@ -546,6 +547,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
             for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
                 if (Player* player = ObjectAccessor::FindPlayer(itr->first))
                 {
+					player->SetCommandStatusOff(CHEAT_CASTTIME);
                     player->RemoveAurasDueToSpell(SPELL_PREPARATION);
                     player->ResetAllPowers();
                 }
@@ -902,7 +904,7 @@ void Battleground::EndBattleground(uint32 winner)
 
         player->ResetAllPowers();
         player->CombatStopWithPets(true);
-		player->setFactionForRace(getRace());
+		player->setFactionForRace(player->getRace());
 
         BlockMovement(player);
 
@@ -1125,7 +1127,7 @@ void Battleground::AddPlayer(Player* player)
 	uint64 guid; 
   
    // score struct must be created in inherited class
-   if (sWorld->getBoolConfig(CONFIG_BG_CROSSFRACTION) == 1 && !isArena())
+   if (!isArena())
    {
 		uint32 hCount = GetPlayersCountByTeam(HORDE);	
 		uint32 aCount = GetPlayersCountByTeam(ALLIANCE);
@@ -1134,13 +1136,13 @@ void Battleground::AddPlayer(Player* player)
 		if (aCount >= hCount)
 		{
 			team = HORDE;
-			player->SetBGTeam(2);
+			player->SetBGTeam(HORDE);
 			player->setFaction(2);
 		}
 		else
 		{
 			team = ALLIANCE;
-			player->SetBGTeam(1);
+			player->SetBGTeam(ALLIANCE);
 			player->setFaction(1);
 		}
     }
@@ -1150,7 +1152,6 @@ void Battleground::AddPlayer(Player* player)
 		team = player->GetBGTeam();
     }
 
-    uint32 TeamID = player->GetBGTeam();
     BattlegroundPlayer bp;
     bp.OfflineRemoveTime = 0;
     bp.Team = team;
@@ -1191,6 +1192,7 @@ void Battleground::AddPlayer(Player* player)
         if (GetStatus() == STATUS_WAIT_JOIN)                 // not started yet
         {
             player->CastSpell(player, SPELL_ARENA_PREPARATION, true);
+			player->SetCommandStatusOn(CHEAT_CASTTIME);
             player->ResetAllPowers();
         }
     }
@@ -1198,6 +1200,8 @@ void Battleground::AddPlayer(Player* player)
     {
         if (GetStatus() == STATUS_WAIT_JOIN)                 // not started yet
             player->CastSpell(player, SPELL_PREPARATION, true);   // reduces all mana cost of spells.
+
+		player->SetCommandStatusOn(CHEAT_CASTTIME);
     }
 
     player->ResetAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE, ACHIEVEMENT_CRITERIA_CONDITION_BG_MAP, GetMapId(), true);
@@ -1988,17 +1992,17 @@ void BattlegroundMgr::HandleCrossfactionSendToBattle(Player* player, Battlegroun
     if (!player || !bg)
         return;
 	
-    if (sWorld->getBoolConfig(CONFIG_BG_CROSSFRACTION) == 1 && bg->isArena())
+    if (bg->isArena())
     {
             if (bg->GetPlayersCountByTeam(HORDE) < bg->GetMaxPlayersPerTeam() && bg->GetPlayersCountByTeam(HORDE) <= bg->GetPlayersCountByTeam(ALLIANCE))
-                player->SetBGTeam(2);
+                player->SetBGTeam(HORDE);
             else if (bg->GetPlayersCountByTeam(ALLIANCE) < bg->GetMaxPlayersPerTeam())
-                player->SetBGTeam(1);
+                player->SetBGTeam(ALLIANCE);
         
         if (player->GetBGTeam() == HORDE)
-            player->setFaction(2); // orc, and generic for horde
+            player->setFaction(HORDE); // orc, and generic for horde
         else if (player->GetBGTeam() == ALLIANCE)
-            player->setFaction(1); // dwarf/gnome, and generic for alliance
+            player->setFaction(ALLIANCE); // dwarf/gnome, and generic for alliance
     }
 
     bg->UpdatePlayersCountByTeam(player->GetBGTeam(), false); // Add here instead of in AddPlayer, because AddPlayer is not made until loading screen is finished. Which can cause unbalance in the system.
