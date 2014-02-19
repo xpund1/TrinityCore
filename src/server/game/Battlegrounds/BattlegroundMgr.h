@@ -96,6 +96,8 @@ class BattlegroundMgr
         void RemoveFromBGFreeSlotQueue(BattlegroundTypeId bgTypeId, uint32 instanceId);
         BGFreeSlotQueueContainer& GetBGFreeSlotQueueStore(BattlegroundTypeId bgTypeId);
 
+		virtual void HandleCrossfactionSendToBattle(Player* player, Battleground* bg, uint32 InstanceID, BattlegroundTypeId bgTypeId);
+
         void CreateInitialBattlegrounds();
         void DeleteAllBattlegrounds();
 

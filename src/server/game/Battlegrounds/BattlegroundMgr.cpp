@@ -23,6 +23,7 @@
 #include "WorldPacket.h"
 
 #include "ArenaTeam.h"
+#include "Battleground.h"
 #include "BattlegroundMgr.h"
 #include "BattlegroundAV.h"
 #include "BattlegroundAB.h"
@@ -892,11 +893,57 @@ void BattlegroundMgr::SendToBattleground(Player* player, uint32 instanceId, Batt
 {
     if (Battleground* bg = GetBattleground(instanceId, bgTypeId))
     {
+
+        if (sWorld->getBoolConfig(CONFIG_BG_CROSSFRACTION) == 1)
+        {
+			/*
+            Team GrpTeam = NULL;
+            if (Group *pGroup = player->GetGroup())
+           {
+                for (GroupReference *itr = pGroup->GetMember(); itr != NULL; itr = itr->next())
+                {
+                    Player* pGroupGuy = itr->getSource();
+                    if (!pGroupGuy)
+                        continue;
+
+                    if (pGroupGuy->GetBattleground() && pGroupGuy->GetBattleground()->GetInstanceID() == instanceId && pGroupGuy->GetBattleground()->GetTypeID() == bgTypeId)
+                    {
+                        GrpTeam = pGroupGuy->GetBGTeam();
+                        break;
+                    }
+                }
+            }
+            if (GrpTeam != NULL && bg->GetPlayersCountByTeam(GrpTeam) < bg->GetMaxPlayersPerTeam())
+            {
+                player->SetBGTeam(GrpTeam);
+                if (GrpTeam == HORDE)
+                    player->setFaction(29); // orc, and generic for horde
+                else if (GrpTeam == ALLIANCE)
+                    player->setFaction(55); // dwarf/gnome, and generic for alliance
+            }
+            else
+            {
+			*/
+                if (bg->GetPlayersCountByTeam(HORDE) < bg->GetMaxPlayersPerTeam()
+                    && bg->GetPlayersCountByTeam(HORDE) < bg->GetPlayersCountByTeam(ALLIANCE))
+                {
+                    player->SetBGTeam(HORDE);
+                    player->setFaction(29); // orc, and generic for horde
+                }
+                else if (bg->GetPlayersCountByTeam(ALLIANCE) < bg->GetMaxPlayersPerTeam()
+                    && bg->GetPlayersCountByTeam(ALLIANCE) < bg->GetPlayersCountByTeam(HORDE))
+                {
+                    player->SetBGTeam(ALLIANCE);
+                    player->setFaction(55); // dwarf/gnome, and generic for alliance
+                }
+           // }
+        }
+
         float x, y, z, O;
         uint32 mapid = bg->GetMapId();
         uint32 team = player->GetBGTeam();
         if (team == 0)
-            team = player->GetTeam();
+            team = player->GetBGTeam();
 
         bg->GetTeamStartLoc(team, x, y, z, O);
         TC_LOG_DEBUG("bg.battleground", "BattlegroundMgr::SendToBattleground: Sending %s to map %u, X %f, Y %f, Z %f, O %f (bgType %u)", player->GetName().c_str(), mapid, x, y, z, O, bgTypeId);
