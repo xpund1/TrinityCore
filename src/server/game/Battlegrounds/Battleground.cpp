@@ -516,7 +516,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                     player->SendDirectMessage(&status);
 
                     player->RemoveAurasDueToSpell(SPELL_ARENA_PREPARATION);
-					player->SetCommandStatusOff(CHEAT_CASTTIME);
+					
                     player->ResetAllPowers();
                     if (!player->IsGameMaster())
                     {
@@ -547,7 +547,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
             for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
                 if (Player* player = ObjectAccessor::FindPlayer(itr->first))
                 {
-					player->SetCommandStatusOff(CHEAT_CASTTIME);
+					
                     player->RemoveAurasDueToSpell(SPELL_PREPARATION);
                     player->ResetAllPowers();
                 }
@@ -615,7 +615,6 @@ inline Player* Battleground::_GetPlayerForTeam(uint32 teamId, BattlegroundPlayer
             player = NULL;
     }
     return player;
-	uint32 TeamID = player->GetBGTeam();
 }
 
 void Battleground::SetTeamStartLoc(uint32 TeamID, float X, float Y, float Z, float O)
@@ -983,6 +982,7 @@ void Battleground::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
     else // try to resurrect the offline player. If he is alive nothing will happen
         sObjectAccessor->ConvertCorpseForPlayer(guid);
 
+	
     RemovePlayer(player, guid, team);                           // BG subclass specific code
 
     if (participant) // if the player was a match participant, remove auras, calc rating, update queue
