@@ -114,6 +114,22 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recvData)
         return;
     }
 
+	    if ((GetPlayer()->GetAreaId() != 297 && player->GetAreaId() == 297))
+    {
+        SendPartyResult(PARTY_OP_INVITE, membername, ERR_IGNORING_YOU_S);
+        return;
+    }
+
+    if (GetPlayer()->GetAreaId() == 297)
+    {
+        Group* plrgroupcheck = GetPlayer()->GetGroup();
+			if (plrgroupcheck && plrgroupcheck->GetMembersCount() >= 3)
+			{
+			      SendPartyResult(PARTY_OP_INVITE, membername, ERR_IGNORING_YOU_S);
+			      return;
+			}
+    }
+
     Group* group = GetPlayer()->GetGroup();
     if (group && group->isBGGroup())
         group = GetPlayer()->GetOriginalGroup();

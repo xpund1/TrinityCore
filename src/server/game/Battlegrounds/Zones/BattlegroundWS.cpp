@@ -346,6 +346,8 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* player)
 
     UpdateFlagState(player->GetBGTeam(), 1);                  // flag state none
     UpdateTeamScore(player->GetTeamId());
+    UpdateTeamScore(Source->GetBGTeam());
+
     // only flag capture should be updated
     UpdatePlayerScore(player, SCORE_FLAG_CAPTURES, 1);      // +1 flag captures
 

@@ -608,9 +608,8 @@ inline Player* Battleground::_GetPlayerForTeam(uint32 teamId, BattlegroundPlayer
     Player* player = _GetPlayer(itr, context);
     if (player)
     {
-        uint32 team = itr->second.Team;
-        if (!team)
-            team = player->GetBGTeam();
+            uint32 team = player->GetBGTeam();
+
         if (team != teamId)
             player = NULL;
     }
@@ -1131,7 +1130,6 @@ void Battleground::AddPlayer(Player* player)
    {
 		uint32 hCount = GetPlayersCountByTeam(HORDE);	
 		uint32 aCount = GetPlayersCountByTeam(ALLIANCE);
-		guid = player->GetGUID();
 
 		if (aCount >= hCount)
 		{
@@ -1147,11 +1145,9 @@ void Battleground::AddPlayer(Player* player)
 		}
     }
     else
-    {	
-		guid = player->GetGUID();
 		team = player->GetBGTeam();
-    }
 
+    guid = player->GetGUID();
     BattlegroundPlayer bp;
     bp.OfflineRemoveTime = 0;
     bp.Team = team;

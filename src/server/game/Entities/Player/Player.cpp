@@ -2887,7 +2887,7 @@ bool Player::IsGroupVisibleFor(Player const* p) const
     {
         default: return IsInSameGroupWith(p);
         case 1:  return IsInSameRaidWith(p);
-        case 2:  return GetTeam() == p->GetTeam();
+        case 2:  return GetBGTeam() == p->GetBGTeam();
     }
 }
 
@@ -5522,7 +5522,7 @@ void Player::RepopAtGraveyard()
     AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());
 
     // Such zones are considered unreachable as a ghost and the player must be automatically revived
-    if ((!IsAlive() && zone && zone->flags & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < -500.0f)
+    if (((!isAlive() && zone && zone->flags & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < -500.0f || GetAreaId() == 148) && GetAreaId() != 297) 
     {
         ResurrectPlayer(0.5f);
         SpawnCorpseBones();
@@ -5538,7 +5538,7 @@ void Player::RepopAtGraveyard()
         if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(GetZoneId()))
             ClosestGrave = bf->GetClosestGraveYard(this);
         else
-            ClosestGrave = sObjectMgr->GetClosestGraveYard(GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId(), GetTeam());
+            ClosestGrave = sObjectMgr->GetClosestGraveYard(GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId(), GetBGTeam());
     }
 
     // stop countdown until repop
@@ -5546,7 +5546,7 @@ void Player::RepopAtGraveyard()
 
     // if no grave found, stay at the current location
     // and don't show spirit healer location
-    if (ClosestGrave)
+    if (ClosestGrave && (GetZoneId() != 148))
     {
         TeleportTo(ClosestGrave->map_id, ClosestGrave->x, ClosestGrave->y, ClosestGrave->z, GetOrientation());
         if (isDead())                                        // not send if alive, because it used in TeleportTo()
@@ -7143,7 +7143,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
         if (!victim || victim == this || victim->GetTypeId() != TYPEID_PLAYER)
             return false;
 
-        if (GetBGTeam() == victim->ToPlayer()->GetBGTeam())
+        if (GetTeam() == victim->ToPlayer()->GetTeam())
             return false;
 
         return true;
@@ -7175,8 +7175,17 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
 
         if (Player* plrVictim = victim->ToPlayer())
         {
-            if (GetBGTeam() == plrVictim->GetBGTeam() && !sWorld->IsFFAPvPRealm())
-                return false;
+
+			if (InBattleground())
+			{
+                 if (GetBGTeam() == plrVictim->GetBGTeam() && !sWorld->IsFFAPvPRealm())
+                     return false;
+			}
+			else
+                 if (GetTeam() == plrVictim->GetTeam() && !sWorld->IsFFAPvPRealm())
+                     return false;
+
+
 
             uint8 k_level = getLevel();
             uint8 k_grey = Trinity::XP::GetGrayLevel(k_level);
@@ -7467,7 +7476,7 @@ void Player::UpdateArea(uint32 newArea)
 
     // previously this was in UpdateZone (but after UpdateArea) so nothing will break
     pvpInfo.IsInNoPvPArea = false;
-    if (area && area->IsSanctuary())    // in sanctuary
+    if (area && area->IsSanctuary() && GetAreaId() != 297)    // in sanctuary
     {
         SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
         pvpInfo.IsInNoPvPArea = true;
@@ -8765,7 +8774,7 @@ void Player::SendLoot(uint64 guid, LootType loot_type)
         {
             uint32 lootid = go->GetGOInfo()->GetLootId();
             if (Battleground* bg = GetBattleground())
-                if (!bg->CanActivateGO(go->GetEntry(), GetTeam()))
+                if (!bg->CanActivateGO(go->GetEntry(), GetBGTeam()))
                 {
                     SendLootRelease(guid);
                     return;
@@ -22263,7 +22272,7 @@ void Player::SetBattlegroundEntryPoint()
         // If map is dungeon find linked graveyard
         if (GetMap()->IsDungeon())
         {
-            if (const WorldSafeLocsEntry* entry = sObjectMgr->GetClosestGraveYard(GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId(), GetTeam()))
+            if (const WorldSafeLocsEntry* entry = sObjectMgr->GetClosestGraveYard(GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId(), GetBGTeam()))
                 m_bgData.joinPos = WorldLocation(entry->map_id, entry->x, entry->y, entry->z, 0.0f);
             else
                 TC_LOG_ERROR("entities.player", "SetBattlegroundEntryPoint: Dungeon map %u has no linked graveyard, setting home location as entry point.", GetMapId());
@@ -22285,7 +22294,7 @@ void Player::SetBGTeam(uint32 team)
 
 uint32 Player::GetBGTeam() const
 {
-    return m_bgData.bgTeam ? m_bgData.bgTeam : GetTeam();
+    return m_bgData.bgTeam ? m_bgData.bgTeam : GetBGTeam();
 }
 
 void Player::LeaveBattleground(bool teleportToEntryPoint)
@@ -22344,7 +22353,7 @@ void Player::ReportedAfkBy(Player* reporter)
 {
     Battleground* bg = GetBattleground();
     // Battleground also must be in progress!
-    if (!bg || bg != reporter->GetBattleground() || GetTeam() != reporter->GetTeam() || bg->GetStatus() != STATUS_IN_PROGRESS)
+    if (!bg || bg != reporter->GetBattleground() || GetBGTeam() != reporter->GetBGTeam() || bg->GetStatus() != STATUS_IN_PROGRESS)
         return;
 
     // check if player has 'Idle' or 'Inactive' debuff
