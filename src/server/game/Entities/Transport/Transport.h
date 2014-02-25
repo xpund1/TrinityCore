@@ -31,20 +31,30 @@ class Transport : public GameObject, public TransportBase
 
         Transport();
     public:
+		Transport(uint32 period, uint32 script);
         ~Transport();
 
         bool Create(uint32 guidlow, uint32 entry, uint32 mapid, float x, float y, float z, float ang, uint32 animprogress);
-        void Update(uint32 diff);
+        bool GenerateWaypoints(uint32 pathid, std::set<uint32> &mapids);
+
+		void Update(uint32 diff);
 
         void BuildUpdate(UpdateDataMapType& data_map);
 
         void AddPassenger(WorldObject* passenger);
         void RemovePassenger(WorldObject* passenger);
-        std::set<WorldObject*> const& GetPassengers() const { return _passengers; }
+
+		std::set<WorldObject*> const& GetPassengers() const { return _passengers; }
+
 
         Creature* CreateNPCPassenger(uint32 guid, CreatureData const* data);
         GameObject* CreateGOPassenger(uint32 guid, GameObjectData const* data);
 
+        typedef std::set<Creature*> CreatureSet;
+        CreatureSet m_NPCPassengerSet;
+
+		typedef std::set<Player*> PlayerSet;
+        PlayerSet m_passengers;
         /// This method transforms supplied transport offsets into global coordinates
         void CalculatePassengerPosition(float& x, float& y, float& z, float* o /*= NULL*/) const
         {
@@ -64,6 +74,8 @@ class Transport : public GameObject, public TransportBase
         KeyFrameVec const& GetKeyFrames() const { return _transportInfo->keyFrames; }
 
         void UpdatePosition(float x, float y, float z, float o);
+		Creature* AddNPCPassengerInInstance(uint32 entry, float x, float y, float z, float o, uint32 anim=0);
+		void UpdatePlayerPositions();
 
         //! Needed when transport moves from inactive to active grid
         void LoadStaticPassengers();
@@ -74,13 +86,43 @@ class Transport : public GameObject, public TransportBase
         void EnableMovement(bool enabled);
 
         TransportTemplate const* GetTransportTemplate() const { return _transportInfo; }
-
     private:
+		 struct WayPoint
+        {
+            WayPoint() : mapid(0), x(0), y(0), z(0), teleport(false), id(0) {}
+            WayPoint(uint32 _mapid, float _x, float _y, float _z, bool _teleport, uint32 _id = 0,
+                uint32 _arrivalEventID = 0, uint32 _departureEventID = 0)
+                : mapid(_mapid), x(_x), y(_y), z(_z), teleport(_teleport), id(_id),
+                arrivalEventID(_arrivalEventID), departureEventID(_departureEventID)
+			{
+			}
+            uint32 mapid;
+            float x;
+            float y;
+            float z;
+            bool teleport;
+            uint32 id;
+            uint32 arrivalEventID;
+            uint32 departureEventID;
+        };
+
+        typedef std::map<uint32, WayPoint> WayPointMap;
+
+        WayPointMap::const_iterator m_curr;
+        WayPointMap::const_iterator m_next;
+        uint32 m_pathTime;
+        uint32 m_timer;
+
+        uint32 currenttguid;
+        uint32 m_period;
+        uint32 ScriptId;
+
         void MoveToNextWaypoint();
         float CalculateSegmentPos(float perc);
         bool TeleportTransport(uint32 newMapid, float x, float y, float z, float o);
         void UpdatePassengerPositions(std::set<WorldObject*>& passengers);
         void DoEventIfAny(KeyFrame const& node, bool departure);
+		WayPointMap::const_iterator GetNextWayPoint();
 
         //! Helpers to know if stop frame was reached
         bool IsMoving() const { return _isMoving; }
@@ -98,8 +140,13 @@ class Transport : public GameObject, public TransportBase
         bool _triggeredArrivalEvent;
         bool _triggeredDepartureEvent;
 
-        std::set<WorldObject*> _passengers;
+        std::set<Player*> passengers;
+		std::set<WorldObject*> _passengers;
         std::set<WorldObject*> _staticPassengers;
+
+		public:
+		WayPointMap m_WayPoints;
+        uint32 m_nextNodeTime;
 };
 
 #endif
