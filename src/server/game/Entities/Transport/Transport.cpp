@@ -18,6 +18,7 @@
 
 #include "Common.h"
 #include "Transport.h"
+#include "TransportMgr.h"
 #include "MapManager.h"
 #include "ObjectMgr.h"
 #include "Path.h"
@@ -295,7 +296,13 @@ void MapManager::LoadTransportNPCs()
 }
 
 Transport::Transport(uint32 period, uint32 script) : GameObject(),
-    _transportInfo(NULL), currenttguid(0), m_period(period), ScriptId(script), m_nextNodeTime(0), m_pathTime(0), m_timer(0), _isMoving(true), _pendingStop(false),
+    currenttguid(0), m_nextNodeTime(0), m_pathTime(0), m_timer(0), m_period(period), ScriptId(script)
+{
+    m_updateFlag = UPDATEFLAG_TRANSPORT | UPDATEFLAG_LOWGUID | UPDATEFLAG_STATIONARY_POSITION | UPDATEFLAG_ROTATION;
+}
+
+Transport::Transport() : GameObject(),
+    _transportInfo(NULL), _isMoving(true), _pendingStop(false),
     _triggeredArrivalEvent(false), _triggeredDepartureEvent(false)
 {
     m_updateFlag = UPDATEFLAG_TRANSPORT | UPDATEFLAG_LOWGUID | UPDATEFLAG_STATIONARY_POSITION | UPDATEFLAG_ROTATION;
@@ -303,13 +310,8 @@ Transport::Transport(uint32 period, uint32 script) : GameObject(),
 
 Transport::~Transport()
 {
-	for (CreatureSet::iterator itr = m_NPCPassengerSet.begin(); itr != m_NPCPassengerSet.end(); ++itr)
-    {
-        (*itr)->SetTransport(NULL);
-        GetMap()->AddObjectToRemoveList(*itr);
-    }
-    //ASSERT(_passengers.empty());
-    //UnloadStaticPassengers();
+    ASSERT(_passengers.empty());
+    UnloadStaticPassengers();
 }
 
 bool Transport::Create(uint32 guidlow, uint32 entry, uint32 mapid, float x, float y, float z, float ang, uint32 animprogress)

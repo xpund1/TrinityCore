@@ -30,6 +30,7 @@ class Transport : public GameObject, public TransportBase
         friend Transport* TransportMgr::CreateTransport(uint32, uint32, Map*);
 
 	    Transport();
+
     public:
 		Transport(uint32 period, uint32 script);
         ~Transport();
