@@ -20,6 +20,7 @@
 #include "InstanceScript.h"
 #include "MoveSpline.h"
 #include "MapManager.h"
+#include "Vehicle.h"
 
 TransportTemplate::~TransportTemplate()
 {
