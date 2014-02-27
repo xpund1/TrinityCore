@@ -11,3 +11,5 @@ Core/SpellMgr: Correct SpellClassMask Idol of the Crying Wind and Idol of Worshi
 DB/Spell: Fix: "Animal Handler"
 Core/Spell:  Fixing Cobra Strikes initial charge amount and its removing basic idea for removing by tobmaps (Tnx Tibbi)
 Core/Spell: Fix spell Vigilance
+Core/Spell: Adding Enrage talent armor reduction part
+Core/Player: Make one-handed weapon specialization apply on Thunder Clap too
