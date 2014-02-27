@@ -13,3 +13,4 @@ Core/Spell:  Fixing Cobra Strikes initial charge amount and its removing basic i
 Core/Spell: Fix spell Vigilance
 Core/Spell: Adding Enrage talent armor reduction part
 Core/Player: Make one-handed weapon specialization apply on Thunder Clap too
+Core/SpellMgr: Correcting Bloodthirst healing
