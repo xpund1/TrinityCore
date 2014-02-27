@@ -127,7 +127,9 @@ bool GameEventMgr::StartEvent(uint16 event_id, bool overwrite)
     if (data.state == GAMEEVENT_NORMAL || data.state == GAMEEVENT_INTERNAL)
     {
         AddActiveEvent(event_id);
+		TC_LOG_INFO("gameevent", "GameEventMgr str 131. %u", event_id);
         ApplyNewEvent(event_id);
+		
         if (overwrite)
         {
             mGameEvent[event_id].start = time(NULL);
@@ -1049,11 +1051,15 @@ uint32 GameEventMgr::Update()                               // return the next e
     // a now activated event can contain a spawn of a to-be-deactivated one
     // following the activate - deactivate order, deactivating the first event later will leave the spawn in (wont disappear then reappear clientside)
     for (std::set<uint16>::iterator itr = activate.begin(); itr != activate.end(); ++itr)
-        // start the event
+    {    // start the event
         // returns true the started event completed
         // in that case, initiate next update in 1 second
+		TC_LOG_INFO("gameevent", "GameEventMgr str 1058. %u", *itr);
         if (StartEvent(*itr))
+		{
             nextEventDelay = 0;
+		}
+	}
     for (std::set<uint16>::iterator itr = deactivate.begin(); itr != deactivate.end(); ++itr)
         StopEvent(*itr);
     TC_LOG_INFO("gameevent", "Next game event check in %u seconds.", nextEventDelay + 1);
@@ -1091,6 +1097,7 @@ void GameEventMgr::ApplyNewEvent(uint16 event_id)
 
     TC_LOG_INFO("gameevent", "GameEvent %u \"%s\" started.", event_id, mGameEvent[event_id].description.c_str());
 
+	TC_LOG_INFO("gameevent", "GameEventMgr str 1098. %u", event_id);
     //! Run SAI scripts with SMART_EVENT_GAME_EVENT_END
     RunSmartAIScripts(event_id, true);
 
@@ -1603,14 +1610,14 @@ void GameEventMgr::RunSmartAIScripts(uint16 event_id, bool activate)
         TRINITY_READ_GUARD(HashMapHolder<Creature>::LockType, *HashMapHolder<Creature>::GetLock());
         HashMapHolder<Creature>::MapType const& m = ObjectAccessor::GetCreatures();
         for (HashMapHolder<Creature>::MapType::const_iterator iter = m.begin(); iter != m.end(); ++iter)
-            if (iter->second->IsInWorld())
+            if (iter->second->IsInWorld() && iter->second->AI())
                 iter->second->AI()->sOnGameEvent(activate, event_id);
     }
     {
         TRINITY_READ_GUARD(HashMapHolder<GameObject>::LockType, *HashMapHolder<GameObject>::GetLock());
         HashMapHolder<GameObject>::MapType const& m = ObjectAccessor::GetGameObjects();
         for (HashMapHolder<GameObject>::MapType::const_iterator iter = m.begin(); iter != m.end(); ++iter)
-            if (iter->second->IsInWorld())
+            if (iter->second->IsInWorld() && iter->second->AI())
                 iter->second->AI()->OnGameEvent(activate, event_id);
     }
 }

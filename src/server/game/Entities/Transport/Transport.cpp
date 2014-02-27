@@ -1058,6 +1058,7 @@ void Transport::UpdatePassengerPositions(std::set<WorldObject*>& passengers)
                 vehicle->RelocatePassengers();
     }
 }
+
 // gunship Data
 void Transport::UpdatePlayerPositions()
 {

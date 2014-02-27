@@ -56,6 +56,7 @@ class Transport : public GameObject, public TransportBase
 
 		typedef std::set<Player*> PlayerSet;
         PlayerSet m_passengers;
+
         /// This method transforms supplied transport offsets into global coordinates
         void CalculatePassengerPosition(float& x, float& y, float& z, float* o /*= NULL*/) const
         {
@@ -77,16 +78,15 @@ class Transport : public GameObject, public TransportBase
         void UpdatePosition(float x, float y, float z, float o);
 		Creature* AddNPCPassengerInInstance(uint32 entry, float x, float y, float z, float o, uint32 anim=0);
 		void UpdatePlayerPositions();
-
         //! Needed when transport moves from inactive to active grid
         void LoadStaticPassengers();
-
+		void UpdatePassengerPositions(std::set<WorldObject*>& passengers);
         //! Needed when transport enters inactive grid
         void UnloadStaticPassengers();
 
         void EnableMovement(bool enabled);
-
         TransportTemplate const* GetTransportTemplate() const { return _transportInfo; }
+		std::set<WorldObject*> _passengers;
     private:
 		 struct WayPoint
         {
@@ -118,16 +118,20 @@ class Transport : public GameObject, public TransportBase
         uint32 m_period;
         uint32 ScriptId;
 
+		//void UpdatePassengerPositions(std::set<WorldObject*>& passengers);
+		
         void MoveToNextWaypoint();
+
         float CalculateSegmentPos(float perc);
         bool TeleportTransport(uint32 newMapid, float x, float y, float z, float o);
-        void UpdatePassengerPositions(std::set<WorldObject*>& passengers);
         void DoEventIfAny(KeyFrame const& node, bool departure);
 		WayPointMap::const_iterator GetNextWayPoint();
 
         //! Helpers to know if stop frame was reached
         bool IsMoving() const { return _isMoving; }
         void SetMoving(bool val) { _isMoving = val; }
+
+		//PlayerSet m_passengers;
 
         TransportTemplate const* _transportInfo;
 
@@ -140,11 +144,9 @@ class Transport : public GameObject, public TransportBase
         //! These are needed to properly control events triggering only once for each frame
         bool _triggeredArrivalEvent;
         bool _triggeredDepartureEvent;
-
-        std::set<Player*> passengers;
-		std::set<WorldObject*> _passengers;
+		
+		
         std::set<WorldObject*> _staticPassengers;
-
 		public:
 		WayPointMap m_WayPoints;
         uint32 m_nextNodeTime;

@@ -425,7 +425,8 @@ void RelocateTransport(Transport* t)
     }
 
     t->Update(0);
-    //t->UpdatePassengerPositions(0); 
+	//std::set<WorldObject*> plr = t->_passengers;
+    t->UpdatePassengerPositions(t->_passengers);
 }
 
 
@@ -788,7 +789,7 @@ class npc_muradin_gunship : public CreatureScript
                     return true;
                 }
 
-                player->ADD_GOSSIP_ITEM(0, "My companions are all accounted for, Muradin. Let's go!", 631, 1001);
+                player->ADD_GOSSIP_ITEM(0, "My companions are all accounted for, Muradin. Let's go!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
                 player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
                 return true;
             }
@@ -804,7 +805,7 @@ class npc_muradin_gunship : public CreatureScript
             if (action == GOSSIP_ACTION_INFO_DEF+2)
                 pCreature->MonsterSay("I'll wait for the raid leader", LANG_UNIVERSAL, player);
 
-            if (action == 1001)
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 pCreature->AI()->DoAction(ACTION_INTRO_START);
                 pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -867,6 +868,7 @@ class npc_muradin_gunship : public CreatureScript
 
             void DoAction(int32 action)
             {
+				TC_LOG_INFO("entities.player.character", "Action - %u", action);
                 switch (action)
                 {
                     case ACTION_INTRO_START:
@@ -887,6 +889,7 @@ class npc_muradin_gunship : public CreatureScript
 
                         Creature* pAllianceBoss = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_SKYBREAKER_BOSS));
                         Creature* pHordeBoss = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_ORGRIMMAR_HAMMER_BOSS));
+
 
                         if (pHordeBoss && pAllianceBoss)
                         {
@@ -1008,6 +1011,7 @@ class npc_muradin_gunship : public CreatureScript
 
                 while (uint32 eventId = events.ExecuteEvent())
                 {
+					TC_LOG_INFO("entities.player.character", "Event nomber - %u", eventId);
                     switch (eventId)
                     {
                         case EVENT_WIPE_CHECK:
@@ -2023,7 +2027,7 @@ class npc_saurfang_gunship : public CreatureScript
                     return true;
                 }
 
-                player->ADD_GOSSIP_ITEM(0, "My companions are all accounted for, Saurfang. Let's go!", 631, 1001);
+                player->ADD_GOSSIP_ITEM(0, "My companions are all accounted for, Saurfang. Let's go!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
                 player->SEND_GOSSIP_MENU(player->GetGossipTextId(pCreature), pCreature->GetGUID());
                 return true;
             }
@@ -2039,7 +2043,7 @@ class npc_saurfang_gunship : public CreatureScript
             if (action == GOSSIP_ACTION_INFO_DEF+2)
                 pCreature->MonsterSay("I'll wait for the raid leader.", LANG_UNIVERSAL, player);
 
-            if (action == 1001)
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 pCreature->AI()->DoAction(ACTION_INTRO_START);
                 pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
